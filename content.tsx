@@ -17,42 +17,44 @@ export const getStyle = () => {
   return style
 }
 
-const SCROLL_EPSILON = 100
-
-const scrollMaxValue = () => {
-  const body = document.body
-  const html = document.documentElement
-
-  const documentHeight = Math.max(
-    body.scrollHeight,
-    body.offsetHeight,
-    html.clientHeight,
-    html.scrollHeight,
-    html.offsetHeight
-  )
-
-  const windowHeight = window.innerHeight
-
-  return documentHeight - windowHeight
+enum BookmarkAge {
+  Level1 = "Level1",
+  Level2 = "Level2",
+  Level3 = "Level3",
+  Level4 = "Level4"
 }
 
-// Hey, now is a good time to read and ditch this!
-// Who are you kidding? You're not gonna read this over the weekend!
+const commonPhrases = [
+  "Keep it or ditch it!",
+  "Who are you kidding? You're not gonna read this over the weekend!"
+]
+
+const phrases: Record<BookmarkAge, string[]> = {
+  [BookmarkAge.Level1]: [
+    "Freshly cooked. Dive in!",
+    "This one is barely out of the oven."
+  ],
+  [BookmarkAge.Level2]: [],
+  [BookmarkAge.Level3]: [
+    "This has been here for a while. Keep it or ditch it?"
+  ],
+  [BookmarkAge.Level4]: [
+    "This has been here for a while. Keep it or ditch it?",
+    "Straight from the Jurassic period. Worth dusting off or ditching?",
+    "This has survived longer than most plants in your care. Revive or ditch?"
+  ]
+}
+
+const colors: Record<BookmarkAge, string> = {
+  [BookmarkAge.Level1]: "bg-green-600",
+  [BookmarkAge.Level2]: "bg-yellow-600",
+  [BookmarkAge.Level3]: "bg-orange-600",
+  [BookmarkAge.Level4]: "bg-red-600"
+}
 
 const CustomButton = () => {
   const [targetURL, setTargetURL] = useState<string | undefined>()
   const [daysSinceAdded, setDaysSinceAdded] = useState(0)
-
-  const [fullScrollAchieved, setFullScrollAchieved] = useState(true)
-
-  const handleScroll = () => {
-    if (fullScrollAchieved) return
-    const position = window.scrollY
-    console.log("[scroll]", position, scrollMaxValue())
-    if (scrollMaxValue() - window.scrollY <= SCROLL_EPSILON) {
-      setFullScrollAchieved(true)
-    }
-  }
 
   useEffect(() => {
     async function fetchActiveBookmark() {
@@ -65,32 +67,32 @@ const CustomButton = () => {
       setDaysSinceAdded(differenceInDays)
     }
     fetchActiveBookmark()
-
-    window.addEventListener("scroll", handleScroll, { passive: true })
-
-    return () => {
-      window.removeEventListener("scroll", handleScroll)
-    }
   }, [])
 
   if (!targetURL || targetURL !== window.location.href) {
     return null
   }
 
+  const ageLevel =
+    daysSinceAdded <= 14
+      ? BookmarkAge.Level1
+      : daysSinceAdded <= 30
+        ? BookmarkAge.Level2
+        : daysSinceAdded <= 180
+          ? BookmarkAge.Level3
+          : BookmarkAge.Level4
+
+  const agePhrases = [...commonPhrases, ...phrases[ageLevel]]
+  const randomIndex = Math.floor(Math.random() * agePhrases.length)
+  const phrase = agePhrases[randomIndex]
+
   return (
     <div className="fixed bg-[#1E1F20] bottom-0 left-[50%] translate-x-[-50%] text-white py-8 px-10 flex justify-center rounded-t-[30px] shadow-[#000_0_-1px_10px_0]">
       <div className="text-center mr-5 pr-10 border-r-[1px] border-r-stone-700 text-stone-100 cursor-default">
-        <h1 className="text-[1em]">
-          Who are you kidding? You're not gonna read this over the weekend!
-        </h1>
+        <h1 className="text-[1em]">{phrase}</h1>
         <div className="flex justify-center items-center">
-          {daysSinceAdded > 365 ? (
-            <div className="bg-red-600 w-2 h-2 rounded-[4px] mr-2"></div>
-          ) : daysSinceAdded > 90 ? (
-            <div className="bg-yellow-600 w-2 h-2 rounded-[4px] mr-2"></div>
-          ) : (
-            <div className="bg-green-600 w-2 h-2 rounded-[4px] mr-2"></div>
-          )}
+          <div
+            className={`${colors[ageLevel]} w-2 h-2 rounded-[4px] mr-2`}></div>
           <span className="text-[0.9em] text-stone-500">
             {Math.floor(daysSinceAdded)} days old
           </span>
@@ -103,7 +105,6 @@ const CustomButton = () => {
       </button>
       <button
         className="border-none border-[4px] px-5 py-2 uppercase opacity-75 hover:opacity-100 disabled:opacity-25"
-        disabled={!fullScrollAchieved}
         onClick={async () => {
           await sendToBackground({ name: "start" })
         }}>
