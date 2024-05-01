@@ -1,8 +1,8 @@
 {
-  "name": "read-or-ditch",
-  "displayName": "Read or ditch",
+  "name": "ditch-me",
+  "displayName": "Ditch me",
   "version": "0.0.1",
-  "description": "Either complete a random read-later bookmark, or ditch it.",
+  "description": "Finally read or ditch those bookmarks you were never gonna visit again.",
   "author": "Pedro Martins <pedrosbarbosamartins@gmail.com>",
   "scripts": {
     "dev": "plasmo dev",
@@ -10,6 +10,7 @@
     "package": "plasmo package"
   },
   "dependencies": {
+    "@plasmohq/messaging": "^0.6.2",
     "plasmo": "0.85.2",
     "react": "18.2.0",
     "react-dom": "18.2.0"
@@ -20,12 +21,29 @@
     "@types/node": "20.11.5",
     "@types/react": "18.2.48",
     "@types/react-dom": "18.2.18",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.38",
     "prettier": "3.2.4",
+    "tailwindcss": "^3.4.3",
     "typescript": "5.3.3"
   },
   "manifest": {
     "host_permissions": [
       "https://*/*"
-    ]
+    ],
+    "permissions": [
+      "bookmarks",
+      "tabs",
+      "sidePanel"
+    ],
+    "commands": {
+      "start-main-flow": {
+        "suggested_key": {
+          "default": "Ctrl+Shift+Y",
+          "mac": "Command+Shift+Y"
+        },
+        "description": "Run the extension flow."
+      }
+    }
   }
 }
