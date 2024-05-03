@@ -35,7 +35,11 @@ function NewTab() {
     if (activeBookmark) register()
   }, [activeBookmark])
 
-  return <div>You're being redirected</div>
+  return (
+    <div className="bg-[#1E1F20] h-screen m-0 p-0 flex justify-center items-center">
+      <div className="pointer-events-none w-[2.5em] h-[2.5em] border-[0.4em] border-[#353739] border-t-[#555] rounded-[50%] animate-spin" />
+    </div>
+  )
 }
 
 export default NewTab

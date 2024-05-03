@@ -25,7 +25,7 @@ enum BookmarkAge {
 }
 
 const commonPhrases = [
-  "Keep it or ditch it!",
+  "Read it or ditch it!",
   "Who are you kidding? You're not gonna read this over the weekend!"
 ]
 
@@ -40,7 +40,8 @@ const phrases: Record<BookmarkAge, string[]> = {
   ],
   [BookmarkAge.Level4]: [
     "This has been here for a while. Keep it or ditch it?",
-    "Straight from the Jurassic period. Worth dusting off or ditching?",
+    "Straight from the Jurassic period",
+    "This one's just gatheting dust, isn't it?",
     "This has survived longer than most plants in your care. Revive or ditch?"
   ]
 }
