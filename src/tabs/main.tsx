@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react"
 
 import { sendToBackground } from "@plasmohq/messaging"
+import { Storage } from "@plasmohq/storage"
 
 import type { Bookmark } from "~background/messages/bookmark"
 
 import "../style.css"
+
+const storage = new Storage()
 
 function NewTab() {
   const [activeBookmark, setActiveBookmark] = useState<Bookmark | undefined>()
 
   useEffect(() => {
     async function init() {
-      const otherBookmarks = (await chrome.bookmarks.getSubTree("2"))[0]
+      const rootFolderId = (await storage.get("rootBookmarkNodeId")) ?? "2"
+      const rootFolder = (await chrome.bookmarks.getSubTree(rootFolderId))[0]
       const randomIndex = Math.floor(
-        Math.random() * otherBookmarks.children!.length
+        Math.random() * rootFolder.children!.length
       )
-      const randomBookmark = otherBookmarks.children[randomIndex]
+      const randomBookmark = rootFolder.children[randomIndex]
       const { url, dateAdded } = randomBookmark
       setActiveBookmark({ url: url!, dateAdded: dateAdded! })
     }
