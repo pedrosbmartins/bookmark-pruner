@@ -1,5 +1,5 @@
-import deleteWhiteIcon from "data-base64:~assets/delete-white.png"
-import rightArrowWhiteIcon from "data-base64:~assets/right-arrow-white.png"
+import deleteWhiteIcon from "data-base64:~../assets/delete-white.png"
+import rightArrowWhiteIcon from "data-base64:~../assets/right-arrow-white.png"
 import cssText from "data-text:~style.css"
 import type { PlasmoCSConfig } from "plasmo"
 import { useEffect, useState } from "react"
