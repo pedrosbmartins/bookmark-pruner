@@ -1,6 +1,7 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
 export interface Bookmark {
+  id: string
   url: string
   dateAdded: number
 }

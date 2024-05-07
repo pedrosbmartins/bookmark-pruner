@@ -17,17 +17,22 @@ function listBookmarkIds(root: chrome.bookmarks.BookmarkTreeNode): string[] {
 
 function NewTab() {
   const [activeBookmark, setActiveBookmark] = useState<Bookmark | undefined>()
+  const [isFolderEmpty, setIsFolderEmpty] = useState(false)
 
   useEffect(() => {
     async function init() {
       const rootId = (await storage.get("rootBookmarkNodeId")) ?? "2"
       const root = (await chrome.bookmarks.getSubTree(rootId))[0]
       const childBookmarks = listBookmarkIds(root)
+      if (childBookmarks.length === 0) {
+        setIsFolderEmpty(true)
+        return
+      }
       const randomIndex = Math.floor(Math.random() * childBookmarks.length)
       const randomBookmarkId = childBookmarks[randomIndex]
       const randomBookmark = (await chrome.bookmarks.get(randomBookmarkId))[0]
-      const { url, dateAdded } = randomBookmark
-      setActiveBookmark({ url: url!, dateAdded: dateAdded! })
+      const { id, url, dateAdded } = randomBookmark
+      setActiveBookmark({ id, url, dateAdded })
     }
 
     init()
@@ -47,7 +52,13 @@ function NewTab() {
 
   return (
     <div className="bg-[#1E1F20] h-screen m-0 p-0 flex justify-center items-center">
-      <div className="pointer-events-none w-[2.5em] h-[2.5em] border-[0.4em] border-[#353739] border-t-[#555] rounded-[50%] animate-spin" />
+      {isFolderEmpty ? (
+        <span className="text-white text-lg text-center">
+          Root folder is empty.
+        </span>
+      ) : (
+        <div className="pointer-events-none w-[2.5em] h-[2.5em] border-[0.4em] border-[#353739] border-t-[#555] rounded-[50%] animate-spin" />
+      )}
     </div>
   )
 }

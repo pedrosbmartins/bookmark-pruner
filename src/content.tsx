@@ -56,8 +56,13 @@ const colors: Record<BookmarkAge, string> = {
 }
 
 const CustomButton = () => {
-  const [targetURL, setTargetURL] = useState<string | undefined>()
-  const [daysSinceAdded, setDaysSinceAdded] = useState(0)
+  const [bookmark, setBookmark] = useState<Bookmark | undefined>()
+
+  const [ageLevel, setAgeLevel] = useState(BookmarkAge.Level1)
+  const [ageLabel, setAgeLabel] = useState("")
+  const [randomPhrase, setRandomPhrase] = useState("")
+
+  const [showDialog, setShowDialog] = useState(false)
 
   useEffect(() => {
     async function fetchActiveBookmark() {
@@ -70,59 +75,95 @@ const CustomButton = () => {
   }, [])
 
   function onBookmarkLoaded(bookmark: Bookmark) {
-    setTargetURL(bookmark.url)
+    setBookmark(bookmark)
     const now = new Date().getTime()
     const added = new Date(bookmark.dateAdded).getTime()
     const differenceInDays = (now - added) / 1000 / 60 / 60 / 24
-    setDaysSinceAdded(differenceInDays)
+
+    const level =
+      differenceInDays <= 14
+        ? BookmarkAge.Level1
+        : differenceInDays <= 30
+          ? BookmarkAge.Level2
+          : differenceInDays <= 180
+            ? BookmarkAge.Level3
+            : BookmarkAge.Level4
+    setAgeLevel(level)
+
+    const agePhrases = [...commonPhrases, ...phrases[level]]
+    const randomIndex = Math.floor(Math.random() * agePhrases.length)
+    setRandomPhrase(agePhrases[randomIndex])
+
+    setAgeLabel(buildAgeLabel(differenceInDays))
   }
 
-  if (!targetURL || targetURL !== window.location.href) {
+  async function nextBookmark() {
+    await sendToBackground({ name: "start" })
+  }
+
+  async function onDitchBookmark() {
+    console.log("ditching...")
+    await sendToBackground({ name: "ditch", body: { bookmarkId: bookmark.id } })
+    console.log("ditched...")
+    setShowDialog(false)
+    console.log("next bookmark...")
+    await nextBookmark()
+  }
+
+  if (!bookmark || !bookmark.url || bookmark.url !== window.location.href) {
     return null
   }
 
-  const ageLevel =
-    daysSinceAdded <= 14
-      ? BookmarkAge.Level1
-      : daysSinceAdded <= 30
-        ? BookmarkAge.Level2
-        : daysSinceAdded <= 180
-          ? BookmarkAge.Level3
-          : BookmarkAge.Level4
-
-  const agePhrases = [...commonPhrases, ...phrases[ageLevel]]
-  const randomIndex = Math.floor(Math.random() * agePhrases.length)
-  const phrase = agePhrases[randomIndex]
-
   return (
-    <div className="fixed bg-[#1E1F20] bottom-0 left-[50%] translate-x-[-50%] text-white py-8 px-10 flex justify-center rounded-t-[30px] shadow-[#000_0_-1px_10px_0]">
-      <div className="text-center mr-5 pr-10 border-r-[1px] border-r-stone-700 text-stone-100 cursor-default">
-        <h1 className="text-[1em]">{phrase}</h1>
-        <div className="flex justify-center items-center">
-          <div
-            className={`${colors[ageLevel]} w-2 h-2 rounded-[4px] mr-2`}></div>
-          <span className="text-[0.9em] text-stone-500">
-            {ageLabel(daysSinceAdded)}
-          </span>
+    <>
+      <div className="fixed bg-[#1E1F20] bottom-0 left-[50%] translate-x-[-50%] text-white py-8 px-10 flex justify-center rounded-t-[30px] shadow-[#000_0_-1px_10px_0]">
+        <div className="text-center mr-5 pr-10 border-r-[1px] border-r-stone-700 text-stone-100 cursor-default">
+          <h1 className="text-[1em]">{randomPhrase}</h1>
+          <div className="flex justify-center items-center">
+            <div
+              className={`${colors[ageLevel]} w-2 h-2 rounded-[4px] mr-2`}></div>
+            <span className="text-[0.9em] text-stone-500">{ageLabel}</span>
+          </div>
+        </div>
+        <button
+          className="border-none border-[4px] px-5 py-2 uppercase opacity-75 hover:opacity-100"
+          onClick={() => setShowDialog(true)}>
+          <img src={deleteWhiteIcon} className="w-8 h-8" alt="Ditch" />
+        </button>
+        <button
+          className="border-none border-[4px] px-5 py-2 uppercase opacity-75 hover:opacity-100 disabled:opacity-25"
+          onClick={() => nextBookmark()}>
+          <img src={rightArrowWhiteIcon} className="w-8 h-8" alt="Next" />
+        </button>
+      </div>
+      <div
+        className={`fixed top-0 left-0 inset-0 w-screen h-screen bg-[rgba(0,0,0,0.9)] flex justify-center items-center ${showDialog ? "visible" : "hidden"}`}
+        onClick={() => setShowDialog(false)}>
+        <div className="bg-[#1E1F20] text-white py-8 px-8 flex flex-col justify-center rounded-[30px] shadow-[#000_0_-1px_10px_0]">
+          <div>Ditch this bookmark?</div>
+          <ul className="flex justify-end gap-4 pt-2 items-baseline">
+            <li>
+              <button
+                className="underline opacity-80 hover:opacity-100"
+                onClick={() => setShowDialog(false)}>
+                No
+              </button>
+            </li>
+            <li>
+              <button
+                className="bg-[rgba(0,0,0,0.75)] rounded-[30px] px-5 py-2 opacity-80 hover:opacity-100"
+                onClick={() => onDitchBookmark()}>
+                Yes
+              </button>
+            </li>
+          </ul>
         </div>
       </div>
-      <button
-        className="border-none border-[4px] px-5 py-2 uppercase opacity-75 hover:opacity-100"
-        onClick={() => alert("Ditch this bookmark?")}>
-        <img src={deleteWhiteIcon} className="w-8 h-8" alt="Ditch" />
-      </button>
-      <button
-        className="border-none border-[4px] px-5 py-2 uppercase opacity-75 hover:opacity-100 disabled:opacity-25"
-        onClick={async () => {
-          await sendToBackground({ name: "start" })
-        }}>
-        <img src={rightArrowWhiteIcon} className="w-8 h-8" alt="Next" />
-      </button>
-    </div>
+    </>
   )
 }
 
-function ageLabel(daysSinceAdded: number) {
+function buildAgeLabel(daysSinceAdded: number) {
   const config = ageLabelConfig(daysSinceAdded)
   const value = Math.floor(daysSinceAdded / config.divider)
   const label = value === 1 ? config.label : `${config.label}s`
