@@ -9,17 +9,22 @@ import "../style.css"
 
 const storage = new Storage()
 
+function listBookmarkIds(root: chrome.bookmarks.BookmarkTreeNode): string[] {
+  if (root.children === undefined) return [root.id]
+  if (root.children.length === 0) return []
+  return root.children.flatMap(listBookmarkIds)
+}
+
 function NewTab() {
   const [activeBookmark, setActiveBookmark] = useState<Bookmark | undefined>()
 
   useEffect(() => {
     async function init() {
-      const rootFolderId = (await storage.get("rootBookmarkNodeId")) ?? "2"
-      const rootFolder = (await chrome.bookmarks.getSubTree(rootFolderId))[0]
-      const randomIndex = Math.floor(
-        Math.random() * rootFolder.children!.length
-      )
-      const randomBookmark = rootFolder.children[randomIndex]
+      const rootId = (await storage.get("rootBookmarkNodeId")) ?? "2"
+      const root = (await chrome.bookmarks.getSubTree(rootId))[0]
+      const childBookmarks = listBookmarkIds(root)
+      const randomIndex = Math.floor(Math.random() * childBookmarks.length)
+      const randomBookmark = root.children[randomIndex]
       const { url, dateAdded } = randomBookmark
       setActiveBookmark({ url: url!, dateAdded: dateAdded! })
     }
