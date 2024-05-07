@@ -24,7 +24,8 @@ function NewTab() {
       const root = (await chrome.bookmarks.getSubTree(rootId))[0]
       const childBookmarks = listBookmarkIds(root)
       const randomIndex = Math.floor(Math.random() * childBookmarks.length)
-      const randomBookmark = root.children[randomIndex]
+      const randomBookmarkId = childBookmarks[randomIndex]
+      const randomBookmark = (await chrome.bookmarks.get(randomBookmarkId))[0]
       const { url, dateAdded } = randomBookmark
       setActiveBookmark({ url: url!, dateAdded: dateAdded! })
     }
