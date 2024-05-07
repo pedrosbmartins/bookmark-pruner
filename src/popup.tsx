@@ -39,16 +39,15 @@ function IndexPopup() {
 
   async function setupFolders() {
     const root = (await chrome.bookmarks.getTree())[0]
-    const rootFolder = { id: "0", title: "Root" }
-    let folders = [rootFolder]
-    folders = [...folders, ...mapFolders(root.children)]
-    setFolders(folders)
+    setFolders(listFolders(root))
   }
 
-  function mapFolders(children: chrome.bookmarks.BookmarkTreeNode[]) {
-    return children
-      .filter((node) => node.children.length !== 0)
-      .map((node) => ({ id: node.id, title: node.title }))
+  function listFolders(root: chrome.bookmarks.BookmarkTreeNode) {
+    if (root.children === undefined || root.children.length === 0) return []
+    return [
+      { id: root.id, title: root.title ?? "Root" },
+      ...root.children.flatMap(listFolders)
+    ]
   }
 
   async function setupRootFolder() {
@@ -70,7 +69,7 @@ function IndexPopup() {
         <span className="my-1 text-[0.9em]">{mainShortcut}</span>
         <div className="my-2">
           <h3 className="font-bold">Root folder</h3>
-          <ul className="font-mono">
+          <ul className="font-mono max-h-[200px] overflow-y-auto">
             {folders.map((folder) => (
               <li
                 key={folder.id}
