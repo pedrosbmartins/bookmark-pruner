@@ -1,9 +1,11 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
-import { startCleanFlow } from "~background"
+import { setActiveBookmark } from "~background"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
-  await startCleanFlow()
+  if (req.body?.bookmark) {
+    await setActiveBookmark(req.body?.bookmark)
+  }
   res.send({})
 }
 

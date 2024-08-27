@@ -6,7 +6,8 @@ import { useEffect, useState } from "react"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
-import type { Bookmark } from "~background/messages/bookmark"
+import type { Bookmark } from "~background"
+import { isSameURL } from "~utils"
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],
@@ -55,7 +56,7 @@ const colors: Record<BookmarkAge, string> = {
   [BookmarkAge.Level4]: "bg-red-600"
 }
 
-const CustomButton = () => {
+const MainContent = () => {
   const [bookmark, setBookmark] = useState<Bookmark | undefined>()
 
   const [ageLevel, setAgeLevel] = useState(BookmarkAge.Level1)
@@ -66,7 +67,7 @@ const CustomButton = () => {
 
   useEffect(() => {
     async function fetchActiveBookmark() {
-      const response = await sendToBackground({ name: "bookmark" })
+      const response = await sendToBackground({ name: "get-bookmark" })
       if (!response || !response.bookmark) return
       onBookmarkLoaded(response.bookmark)
     }
@@ -102,15 +103,16 @@ const CustomButton = () => {
   }
 
   async function onDitchBookmark() {
-    console.log("ditching...")
     await sendToBackground({ name: "ditch", body: { bookmarkId: bookmark.id } })
-    console.log("ditched...")
     setShowDialog(false)
-    console.log("next bookmark...")
     await nextBookmark()
   }
 
-  if (!bookmark || !bookmark.url || bookmark.url !== window.location.href) {
+  if (
+    !bookmark ||
+    !bookmark.url ||
+    !isSameURL(bookmark.url, window.location.href)
+  ) {
     return null
   }
 
@@ -187,4 +189,4 @@ const labelConfig = {
   years: { divider: 365, label: "year" }
 }
 
-export default CustomButton
+export default MainContent

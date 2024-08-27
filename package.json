@@ -35,7 +35,8 @@
     "permissions": [
       "bookmarks",
       "tabs",
-      "sidePanel"
+      "sidePanel",
+      "webRequest"
     ],
     "commands": {
       "start-main-flow": {
