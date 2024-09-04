@@ -1,8 +1,8 @@
 {
-  "name": "ditch-me",
-  "displayName": "Ditch me",
+  "name": "bookmark-pruner",
+  "displayName": "Bookmark Pruner",
   "version": "0.0.1",
-  "description": "Finally read or ditch those bookmarks you were never gonna visit again.",
+  "description": "Load a random bookmark, Prune, Repeat.",
   "author": "Pedro Martins <pedrosbarbosamartins@gmail.com>",
   "scripts": {
     "dev": "plasmo dev",
