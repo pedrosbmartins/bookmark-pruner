@@ -16,7 +16,7 @@ export async function getActiveBookmark(
   return await storage.get<undefined>(tabId.toString())
 }
 
-export async function nextBookmark(tabId: number) {
+export async function loadNextBookmark(tabId: number) {
   await chrome.tabs.sendMessage(tabId, buildLoadingMessage())
   try {
     const bookmark = await selectRandomBookmark()
@@ -25,6 +25,15 @@ export async function nextBookmark(tabId: number) {
   } catch (error) {
     await chrome.tabs.sendMessage(tabId, buildFailedMessage(error))
   }
+}
+
+export async function updateBookmarkUrl(tabId: number, newUrl: string) {
+  const bookmark = await getActiveBookmark(tabId)
+  if (!bookmark) {
+    console.error("update bookmark url: could not find bookmark")
+    return
+  }
+  await persistActiveBookmark(tabId, { ...bookmark, url: newUrl })
 }
 
 async function selectRandomBookmark() {

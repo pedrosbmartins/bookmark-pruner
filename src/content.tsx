@@ -8,6 +8,7 @@ import { sendToBackground } from "@plasmohq/messaging"
 
 import { type Bookmark } from "~core/bookmarks"
 import { Status, type Message } from "~core/messaging"
+import { isSameURL } from "~utils"
 
 export const config: PlasmoCSConfig = {
   matches: ["<all_urls>"],
@@ -43,14 +44,6 @@ export default function MainContent() {
 
     return () => chrome.runtime.onMessage.removeListener(onMessage)
   }, [])
-
-  function isSameURL(urlFrom: string, urlTo: string) {
-    return stripScheme(urlFrom) === stripScheme(urlTo)
-  }
-
-  function stripScheme(url: string) {
-    return url.replace(/^https?/, "")
-  }
 
   if (
     !bookmark ||
