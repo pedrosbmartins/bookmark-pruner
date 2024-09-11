@@ -1,5 +1,7 @@
 import { Storage } from "@plasmohq/storage"
 
+import { buildFailedMessage, buildLoadingMessage } from "./messaging"
+
 const storage = new Storage({ area: "local" })
 
 export interface Bookmark {
@@ -8,7 +10,24 @@ export interface Bookmark {
   dateAdded: number
 }
 
-export async function selectRandomBookmark() {
+export async function getActiveBookmark(
+  tabId: number
+): Promise<Bookmark | undefined> {
+  return await storage.get<undefined>(tabId.toString())
+}
+
+export async function nextBookmark(tabId: number) {
+  await chrome.tabs.sendMessage(tabId, buildLoadingMessage())
+  try {
+    const bookmark = await selectRandomBookmark()
+    await persistActiveBookmark(tabId, bookmark)
+    await chrome.tabs.update({ url: bookmark.url })
+  } catch (error) {
+    await chrome.tabs.sendMessage(tabId, buildFailedMessage(error))
+  }
+}
+
+async function selectRandomBookmark() {
   const rootId = (await storage.get("rootBookmarkNodeId")) ?? "2"
   const root = (await chrome.bookmarks.getSubTree(rootId))[0]
   const childBookmarks = listBookmarkIds(root)
@@ -21,14 +40,8 @@ export async function selectRandomBookmark() {
   return buildBookmark(randomBookmark)
 }
 
-export async function persistActiveBookmark(tabId: number, bookmark: Bookmark) {
+async function persistActiveBookmark(tabId: number, bookmark: Bookmark) {
   await storage.set(tabId.toString(), bookmark)
-}
-
-export async function getActiveBookmark(
-  tabId: number
-): Promise<Bookmark | undefined> {
-  return await storage.get<undefined>(tabId.toString())
 }
 
 function listBookmarkIds(root: chrome.bookmarks.BookmarkTreeNode): string[] {
@@ -42,7 +55,7 @@ function buildBookmark(
 ): Bookmark {
   return {
     id: chromeBookmark.id,
-    url: chromeBookmark.url,
-    dateAdded: chromeBookmark.dateAdded
+    url: chromeBookmark.url!,
+    dateAdded: chromeBookmark.dateAdded!
   }
 }

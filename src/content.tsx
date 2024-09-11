@@ -6,7 +6,7 @@ import { useEffect, useState } from "react"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
-import type { Bookmark } from "~core/bookmarks"
+import { type Bookmark } from "~core/bookmarks"
 import { Status, type Message } from "~core/messaging"
 
 export const config: PlasmoCSConfig = {
@@ -86,9 +86,13 @@ function Content(props: { bookmark?: Bookmark }) {
     setAgeInDays(Math.round(differenceInDays))
   }, [props.bookmark])
 
+  const nextBookmark = async () => {
+    await sendToBackground({ name: "next-bookmark" })
+  }
+
   return (
     <>
-      <div className="rounded-l-[20px] flex text-center justify-center px-12 py-6 cursor-default">
+      <div className="transition-all rounded-l-[20px] flex text-center justify-center px-12 py-6 cursor-default">
         <span className="text-[4em] block">
           <span className="font-mono">{ageInDays}</span>
           <span className="text-[0.5em] font-thin"> days ago</span>
@@ -102,7 +106,9 @@ function Content(props: { bookmark?: Bookmark }) {
             alt="Delete bookmark"
           />
         </div>
-        <div className="rounded-br-[20px] bg-black/30 flex items-center justify-center py-4 px-6 cursor-pointer hover:bg-black/10">
+        <div
+          className="rounded-br-[20px] bg-black/30 flex items-center justify-center py-4 px-6 cursor-pointer hover:bg-black/10"
+          onClick={nextBookmark}>
           <img
             src={shuffleIcon}
             className="w-[24px] aspect-square"
