@@ -129,10 +129,12 @@ function Content(props: {
 
   return (
     <>
-      <div className="transition-all rounded-l-[20px] flex text-center justify-center px-12 py-6 cursor-default">
-        <span className="text-[4em] block">
-          <span className="font-mono">{ageInDays}</span>
-          <span className="text-[0.5em] font-thin"> days ago</span>
+      <div className="transition-all rounded-l-[20px] flex text-center justify-center px-6 py-3 cursor-default md:px-12 md:py-6">
+        <span className="flex items-center text-nowrap text-[3em] md:text-[4em]">
+          <span className="leading-[0.5em]">
+            <span className="font-mono">{ageInDays}</span>
+            <span className="text-[0.5em] font-thin"> days ago</span>
+          </span>
         </span>
       </div>
       <div className="flex flex-col">
@@ -141,7 +143,7 @@ function Content(props: {
           onClick={props.onRemoveBookmark}>
           <img
             src={deleteIcon}
-            className="w-[40px] aspect-square"
+            className="w-[40px] aspect-square min-w-[40px]"
             alt="Delete bookmark"
           />
         </div>
@@ -150,7 +152,7 @@ function Content(props: {
           onClick={props.onNextBookmark}>
           <img
             src={shuffleIcon}
-            className="w-[24px] aspect-square"
+            className="w-[24px] aspect-square min-w-[24px]"
             alt="Next bookmark"
           />
         </div>
