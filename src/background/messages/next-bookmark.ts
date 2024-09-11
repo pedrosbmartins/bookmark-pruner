@@ -4,11 +4,12 @@ import { loadNextBookmark } from "~core/bookmarks"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const tabId = req.sender?.tab?.id
-  if (tabId !== undefined) {
-    await loadNextBookmark(tabId)
-  } else {
+  if (tabId === undefined) {
     console.error("next-bookmark: no sender tab found")
+    res.send({})
+    return
   }
+  await loadNextBookmark(tabId)
   res.send({})
 }
 

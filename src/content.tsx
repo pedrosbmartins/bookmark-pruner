@@ -24,6 +24,8 @@ export const getStyle = () => {
 
 export default function MainContent() {
   const [isLoading, setIsLoading] = useState(true)
+  const [showDialog, setShowDialog] = useState(false)
+
   const [bookmark, setBookmark] = useState<Bookmark | undefined>()
 
   useEffect(() => {
@@ -45,6 +47,15 @@ export default function MainContent() {
     return () => chrome.runtime.onMessage.removeListener(onMessage)
   }, [])
 
+  const nextBookmark = async () => {
+    await sendToBackground({ name: "next-bookmark" })
+  }
+
+  const onRemoveBookmark = async () => {
+    await sendToBackground({ name: "remove-bookmark" })
+    await nextBookmark()
+  }
+
   if (
     !bookmark ||
     !bookmark.url ||
@@ -54,9 +65,42 @@ export default function MainContent() {
   }
 
   return (
-    <div className="fixed bg-[#29282D] bottom-4 left-[50%] translate-x-[-50%] text-white flex justify-center rounded-[20px] shadow-[#000_0_1px_5px_0] font-sans">
-      {isLoading ? <Spinner /> : <Content bookmark={bookmark} />}
-    </div>
+    <>
+      <div className="fixed bg-[#29282D] bottom-4 left-[50%] translate-x-[-50%] text-white flex justify-center rounded-[20px] shadow-[#000_0_1px_5px_0] font-sans">
+        {isLoading ? (
+          <Spinner />
+        ) : (
+          <Content
+            bookmark={bookmark}
+            onNextBookmark={nextBookmark}
+            onRemoveBookmark={() => setShowDialog(true)}
+          />
+        )}
+      </div>
+      <div
+        className={`fixed top-0 left-0 inset-0 w-screen h-screen bg-[rgba(0,0,0,0.9)] flex justify-center items-center ${showDialog ? "visible" : "hidden"}`}
+        onClick={() => setShowDialog(false)}>
+        <div className="bg-[#1E1F20] text-white py-8 px-8 flex flex-col justify-center rounded-[30px] shadow-[#000_0_-1px_10px_0]">
+          <div>Ditch this bookmark?</div>
+          <ul className="flex justify-end gap-4 pt-2 items-baseline">
+            <li>
+              <button
+                className="underline opacity-80 hover:opacity-100"
+                onClick={() => setShowDialog(false)}>
+                No
+              </button>
+            </li>
+            <li>
+              <button
+                className="bg-[rgba(0,0,0,0.75)] rounded-[30px] px-5 py-2 opacity-80 hover:opacity-100"
+                onClick={onRemoveBookmark}>
+                Yes
+              </button>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </>
   )
 }
 
@@ -66,7 +110,11 @@ function Spinner() {
   )
 }
 
-function Content(props: { bookmark?: Bookmark }) {
+function Content(props: {
+  bookmark?: Bookmark
+  onNextBookmark: () => void
+  onRemoveBookmark: () => void
+}) {
   const [ageInDays, setAgeInDays] = useState<number | undefined>()
 
   useEffect(() => {
@@ -79,10 +127,6 @@ function Content(props: { bookmark?: Bookmark }) {
     setAgeInDays(Math.round(differenceInDays))
   }, [props.bookmark])
 
-  const nextBookmark = async () => {
-    await sendToBackground({ name: "next-bookmark" })
-  }
-
   return (
     <>
       <div className="transition-all rounded-l-[20px] flex text-center justify-center px-12 py-6 cursor-default">
@@ -92,7 +136,9 @@ function Content(props: { bookmark?: Bookmark }) {
         </span>
       </div>
       <div className="flex flex-col">
-        <div className="rounded-tr-[20px] bg-black/50 flex-1 flex items-center justify-center py-4 px-6 cursor-pointer hover:bg-red-600">
+        <div
+          className="rounded-tr-[20px] bg-black/50 flex-1 flex items-center justify-center py-4 px-6 cursor-pointer select-none hover:bg-red-600"
+          onClick={props.onRemoveBookmark}>
           <img
             src={deleteIcon}
             className="w-[40px] aspect-square"
@@ -100,8 +146,8 @@ function Content(props: { bookmark?: Bookmark }) {
           />
         </div>
         <div
-          className="rounded-br-[20px] bg-black/30 flex items-center justify-center py-4 px-6 cursor-pointer hover:bg-black/10"
-          onClick={nextBookmark}>
+          className="rounded-br-[20px] bg-black/30 flex items-center justify-center py-4 px-6 cursor-pointer select-none hover:bg-black/10"
+          onClick={props.onNextBookmark}>
           <img
             src={shuffleIcon}
             className="w-[24px] aspect-square"

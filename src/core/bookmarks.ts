@@ -27,7 +27,7 @@ export async function loadNextBookmark(tabId: number) {
   }
 }
 
-export async function updateBookmarkUrl(tabId: number, newUrl: string) {
+export async function updateActiveBookmarkUrl(tabId: number, newUrl: string) {
   const bookmark = await getActiveBookmark(tabId)
   if (!bookmark) {
     console.error("update bookmark url: could not find bookmark")

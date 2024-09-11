@@ -1,7 +1,7 @@
 import {
   getActiveBookmark,
   loadNextBookmark,
-  updateBookmarkUrl
+  updateActiveBookmarkUrl
 } from "~core/bookmarks"
 import { isSameURL } from "~utils"
 
@@ -31,5 +31,5 @@ async function handleRedirect(
   }
   const redirectMsg = `${url} => ${redirectUrl}`
   console.info(`updating bookmark url for tab ${tabId},`, redirectMsg)
-  await updateBookmarkUrl(tabId, redirectUrl)
+  await updateActiveBookmarkUrl(tabId, redirectUrl)
 }
