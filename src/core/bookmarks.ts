@@ -1,7 +1,5 @@
 import { Storage } from "@plasmohq/storage"
 
-import { buildFailedMessage, buildLoadingMessage } from "./messaging"
-
 const storage = new Storage({ area: "local" })
 
 export interface Bookmark {
@@ -17,14 +15,9 @@ export async function getActiveBookmark(
 }
 
 export async function loadNextBookmark(tabId: number) {
-  await chrome.tabs.sendMessage(tabId, buildLoadingMessage())
-  try {
-    const bookmark = await selectRandomBookmark()
-    await persistActiveBookmark(tabId, bookmark)
-    await chrome.tabs.update({ url: bookmark.url })
-  } catch (error) {
-    await chrome.tabs.sendMessage(tabId, buildFailedMessage(error))
-  }
+  const bookmark = await selectRandomBookmark()
+  await persistActiveBookmark(tabId, bookmark)
+  await chrome.tabs.update({ url: bookmark.url })
 }
 
 export async function updateActiveBookmarkUrl(tabId: number, newUrl: string) {

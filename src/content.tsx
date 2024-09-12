@@ -7,7 +7,6 @@ import { useEffect, useState } from "react"
 import { sendToBackground } from "@plasmohq/messaging"
 
 import { type Bookmark } from "~core/bookmarks"
-import { Status, type Message } from "~core/messaging"
 import { isSameURL } from "~utils"
 
 export const config: PlasmoCSConfig = {
@@ -22,38 +21,20 @@ export const getStyle = () => {
   return style
 }
 
-export default function MainContent() {
-  const [isLoading, setIsLoading] = useState(true)
-  const [showRemoveDialog, setShowRemoveDialog] = useState(false)
-
+export default function Container() {
   const [bookmark, setBookmark] = useState<Bookmark | undefined>()
 
   useEffect(() => {
-    const onMessage = (message: Message) => {
-      const { status } = message
-      setIsLoading(status === Status.loading)
-    }
-
-    chrome.runtime.onMessage.addListener(onMessage)
-
     const run = async () => {
       const response = await sendToBackground({ name: "get-bookmark" })
       setBookmark(response.bookmark)
-      setIsLoading(false)
     }
 
     run()
-
-    return () => chrome.runtime.onMessage.removeListener(onMessage)
   }, [])
 
   const nextBookmark = async () => {
     await sendToBackground({ name: "next-bookmark" })
-  }
-
-  const onRemoveBookmark = async () => {
-    await sendToBackground({ name: "remove-bookmark" })
-    await nextBookmark()
   }
 
   if (
@@ -64,81 +45,74 @@ export default function MainContent() {
     return null
   }
 
-  return (
-    <>
-      <div className="fixed bg-[#29282D] bottom-4 left-[50%] translate-x-[-50%] text-white flex justify-center rounded-[20px] shadow-[#000_0_1px_5px_0] font-sans">
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          <Content
-            bookmark={bookmark}
-            onNextBookmark={nextBookmark}
-            onRemoveBookmark={() => setShowRemoveDialog(true)}
-          />
-        )}
-      </div>
-      <RemoveBookmarkDialog
-        visible={showRemoveDialog}
-        onCancel={() => setShowRemoveDialog(false)}
-        onRemoveBookmark={onRemoveBookmark}
-      />
-    </>
-  )
+  return <Content bookmark={bookmark} onNextBookmark={nextBookmark} />
 }
 
-function Spinner() {
-  return (
-    <div className="pointer-events-none w-[2.5em] h-[2.5em] border-[0.1em] border-[#353739] border-t-[#cacaca] rounded-[50%] animate-spin mx-12 my-6" />
-  )
-}
-
-function Content(props: {
-  bookmark?: Bookmark
-  onNextBookmark: () => void
-  onRemoveBookmark: () => void
-}) {
+function Content(props: { bookmark?: Bookmark; onNextBookmark: () => void }) {
   const [ageInDays, setAgeInDays] = useState<number | undefined>()
+  const [isVisible, setIsVisible] = useState(false)
+
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false)
 
   useEffect(() => {
     if (!props.bookmark) {
+      setIsVisible(false)
       return
     }
     const now = new Date().getTime()
     const added = new Date(props.bookmark?.dateAdded).getTime()
     const differenceInDays = (now - added) / 1000 / 60 / 60 / 24
     setAgeInDays(Math.round(differenceInDays))
+    setTimeout(() => setIsVisible(true), 100)
   }, [props.bookmark])
+
+  const onRemoveBookmark = async () => {
+    setIsVisible(false)
+    await sendToBackground({ name: "remove-bookmark" })
+    props.onNextBookmark()
+  }
 
   return (
     <>
-      <div className="transition-all rounded-l-[20px] flex text-center justify-center px-6 py-3 cursor-default md:px-12 md:py-6">
-        <span className="flex items-center text-nowrap text-[3em] md:text-[4em]">
-          <span className="leading-[0.5em]">
-            <span className="font-mono">{ageInDays}</span>
-            <span className="text-[0.5em] font-thin"> days old</span>
+      <div
+        className={`transition-transform duration-500 ${isVisible ? "translate-y-0" : "translate-y-[500px]"} fixed bg-[#29282D] bottom-4 left-[50%] translate-x-[-50%] text-white flex justify-center rounded-[20px] shadow-[#000_0_1px_5px_0] font-sans`}>
+        <div className="rounded-l-[20px] flex text-center justify-center px-6 py-3 cursor-default md:px-12 md:py-6">
+          <span className="flex items-center text-nowrap text-[3em] md:text-[4em]">
+            <span className="leading-[0.5em]">
+              <span className="font-mono">{ageInDays}</span>
+              <span className="text-[0.5em] font-thin"> days old</span>
+            </span>
           </span>
-        </span>
-      </div>
-      <div className="flex flex-col">
-        <div
-          className="rounded-tr-[20px] bg-black/50 flex-1 flex items-center justify-center py-4 px-6 cursor-pointer select-none hover:bg-red-600"
-          onClick={props.onRemoveBookmark}>
-          <img
-            src={deleteIcon}
-            className="w-[40px] aspect-square min-w-[40px]"
-            alt="Delete bookmark"
-          />
         </div>
-        <div
-          className="rounded-br-[20px] bg-black/30 flex items-center justify-center py-4 px-6 cursor-pointer select-none hover:bg-black/10"
-          onClick={props.onNextBookmark}>
-          <img
-            src={shuffleIcon}
-            className="w-[24px] aspect-square min-w-[24px]"
-            alt="Next bookmark"
-          />
+        <div className="flex flex-col">
+          <div
+            className="rounded-tr-[20px] bg-black/50 flex-1 flex items-center justify-center py-4 px-6 cursor-pointer select-none hover:bg-red-600"
+            onClick={() => setShowRemoveDialog(true)}>
+            <img
+              src={deleteIcon}
+              className="w-[40px] aspect-square min-w-[40px]"
+              alt="Delete bookmark"
+            />
+          </div>
+          <div
+            className="rounded-br-[20px] bg-black/30 flex items-center justify-center py-4 px-6 cursor-pointer select-none hover:bg-black/10"
+            onClick={() => {
+              setIsVisible(false)
+              props.onNextBookmark()
+            }}>
+            <img
+              src={shuffleIcon}
+              className="w-[24px] aspect-square min-w-[24px]"
+              alt="Next bookmark"
+            />
+          </div>
         </div>
       </div>
+      <RemoveBookmarkDialog
+        visible={showRemoveDialog}
+        onCancel={() => setShowRemoveDialog(false)}
+        onRemoveBookmark={onRemoveBookmark}
+      />
     </>
   )
 }
