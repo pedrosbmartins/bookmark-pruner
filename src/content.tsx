@@ -24,7 +24,7 @@ export const getStyle = () => {
 
 export default function MainContent() {
   const [isLoading, setIsLoading] = useState(true)
-  const [showDialog, setShowDialog] = useState(false)
+  const [showRemoveDialog, setShowRemoveDialog] = useState(false)
 
   const [bookmark, setBookmark] = useState<Bookmark | undefined>()
 
@@ -73,33 +73,15 @@ export default function MainContent() {
           <Content
             bookmark={bookmark}
             onNextBookmark={nextBookmark}
-            onRemoveBookmark={() => setShowDialog(true)}
+            onRemoveBookmark={() => setShowRemoveDialog(true)}
           />
         )}
       </div>
-      <div
-        className={`fixed top-0 left-0 inset-0 w-screen h-screen bg-[rgba(0,0,0,0.9)] flex justify-center items-center ${showDialog ? "visible" : "hidden"}`}
-        onClick={() => setShowDialog(false)}>
-        <div className="bg-[#1E1F20] text-white py-8 px-8 flex flex-col justify-center rounded-[30px] shadow-[#000_0_-1px_10px_0]">
-          <div>Ditch this bookmark?</div>
-          <ul className="flex justify-end gap-4 pt-2 items-baseline">
-            <li>
-              <button
-                className="underline opacity-80 hover:opacity-100"
-                onClick={() => setShowDialog(false)}>
-                No
-              </button>
-            </li>
-            <li>
-              <button
-                className="bg-[rgba(0,0,0,0.75)] rounded-[30px] px-5 py-2 opacity-80 hover:opacity-100"
-                onClick={onRemoveBookmark}>
-                Yes
-              </button>
-            </li>
-          </ul>
-        </div>
-      </div>
+      <RemoveBookmarkDialog
+        visible={showRemoveDialog}
+        onCancel={() => setShowRemoveDialog(false)}
+        onRemoveBookmark={onRemoveBookmark}
+      />
     </>
   )
 }
@@ -133,7 +115,7 @@ function Content(props: {
         <span className="flex items-center text-nowrap text-[3em] md:text-[4em]">
           <span className="leading-[0.5em]">
             <span className="font-mono">{ageInDays}</span>
-            <span className="text-[0.5em] font-thin"> days ago</span>
+            <span className="text-[0.5em] font-thin"> days old</span>
           </span>
         </span>
       </div>
@@ -158,5 +140,35 @@ function Content(props: {
         </div>
       </div>
     </>
+  )
+}
+
+function RemoveBookmarkDialog(props: {
+  visible: boolean
+  onCancel: () => void
+  onRemoveBookmark: () => {}
+}) {
+  return (
+    <div
+      className={`fixed top-0 left-0 inset-0 w-screen h-screen bg-[rgba(0,0,0,0.85)] flex justify-center items-center ${props.visible ? "visible" : "hidden"}`}
+      onClick={props.onCancel}>
+      <div className="bg-[#131216] text-white flex flex-col justify-center rounded-[20px] shadow-[#000_0_1px_5px_0] select-none cursor-default">
+        <div className="text-center py-6 px-12 font-medium">
+          Permanently remove bookmark?
+        </div>
+        <div className="flex justify-stretch">
+          <div
+            className="bg-black/40 flex-1 rounded-bl-[20px] py-3 px-12 cursor-pointer hover:bg-black/20"
+            onClick={props.onCancel}>
+            <span className="text-[1.5em] font-medium">Cancel</span>
+          </div>
+          <div
+            className="bg-black/10 flex-1 rounded-br-[20px] py-3 px-12 cursor-pointer hover:bg-red-600"
+            onClick={props.onRemoveBookmark}>
+            <span className="text-[1.5em] font-medium">Remove</span>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
