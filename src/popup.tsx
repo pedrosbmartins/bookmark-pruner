@@ -1,3 +1,4 @@
+import logo from "data-base64:~../assets/logo.png"
 import { useEffect, useState } from "react"
 
 import { sendToBackground } from "@plasmohq/messaging"
@@ -49,10 +50,13 @@ export default function IndexPopup() {
 
   return (
     <div className="w-[300px] bg-[#29282D] text-white text-[1.2em]">
-      <div className="bg-[rgba(0,0,0,0.25)] p-4 flex flex-col items-center">
-        <h2 className="text-md text-center text-gray-100 font-mono">
-          Bookmark Pruner
-        </h2>
+      <div className="p-4 flex flex-col items-center">
+        <div className="mb-2 flex flex-col items-center">
+          <img src={logo} className="w-[48px] p-2 aspect-auto" alt="logo" />
+          <h2 className="text-md text-center text-gray-100 font-mono">
+            Bookmark Pruner
+          </h2>
+        </div>
         <button
           className="w-[80%] my-2 py-2 bg-blue-500 rounded-md uppercase font-bold font-mono active:bg-blue-600"
           onClick={onNextBookmark}>
@@ -62,7 +66,7 @@ export default function IndexPopup() {
           {shortcut}
         </span>
       </div>
-      <div className="p-4">
+      <div className="bg-[rgba(255,255,255,0.05)] p-4">
         <h3 className="font-bold mb-1">Root folder</h3>
         <ul className="font-mono max-h-[200px] overflow-y-auto">
           {folders.map((folder) => (
@@ -76,7 +80,7 @@ export default function IndexPopup() {
         </ul>
       </div>
       <div
-        className="bg-[rgba(255,255,255,0.05)] py-2 px-4 flex text-[1em] cursor-pointer hover:bg-[rgba(255,255,255,0.1)]"
+        className="py-2 px-4 flex text-[1em] cursor-pointer hover:bg-[rgba(255,255,255,0.1)]"
         onClick={() =>
           window.open(
             "https://github.com/pedrosbmartins/bookmark-pruner",

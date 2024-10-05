@@ -16,7 +16,7 @@ function listFolders(
 ): { id: string; title: string }[] {
   if (root.children === undefined || root.children.length === 0) return []
   return [
-    { id: root.id, title: root.title ?? "Root" },
+    { id: root.id, title: root.title ?? root.id },
     ...root.children.flatMap(listFolders)
   ]
 }
