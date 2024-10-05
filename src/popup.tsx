@@ -2,7 +2,8 @@ import { useEffect, useState } from "react"
 
 import { sendToBackground } from "@plasmohq/messaging"
 
-import commands from "~core/commands"
+import { listAllBookmarkFolders } from "~core/bookmarks"
+import { Command, getShortcut } from "~core/commands"
 import { getRootBookmarkNodeId, setRootBookmarkNodeId } from "~core/store"
 
 import "./style.css"
@@ -27,33 +28,19 @@ export default function IndexPopup() {
     setRootBookmarkNodeId(rootFolderId)
   }, [rootFolderId])
 
-  function setupShortcuts() {
-    chrome.commands.getAll((commandList) => {
-      for (let { name, shortcut } of commandList) {
-        if (name === commands.LOAD_RANDOM_BOOKMARK) {
-          setShortcut(shortcut)
-        }
-      }
-    })
+  async function setupShortcuts() {
+    const shortcut = await getShortcut(Command.LOAD_RANDOM_BOOKMARK)
+    setShortcut(shortcut)
   }
 
   async function setupFolders() {
-    const root = (await chrome.bookmarks.getTree())[0]
-    setFolders(listFolders(root))
-  }
-
-  function listFolders(
-    root: chrome.bookmarks.BookmarkTreeNode
-  ): { id: string; title: string }[] {
-    if (root.children === undefined || root.children.length === 0) return []
-    return [
-      { id: root.id, title: root.title ?? "Root" },
-      ...root.children.flatMap(listFolders)
-    ]
+    const allFolders = await listAllBookmarkFolders()
+    setFolders(allFolders)
   }
 
   async function setupRootFolder() {
-    setRootFolderId(await getRootBookmarkNodeId())
+    const id = await getRootBookmarkNodeId()
+    setRootFolderId(id)
   }
 
   return (

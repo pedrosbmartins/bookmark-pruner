@@ -1,12 +1,12 @@
 import { loadNextBookmark, updateActiveBookmarkUrl } from "~core/bookmarks"
-import commands from "~core/commands"
+import { Command } from "~core/commands"
 import * as store from "~core/store"
 import { isSameURL } from "~utils"
 
 export {}
 
 chrome.commands.onCommand.addListener(async (command, tab) => {
-  if (command === commands.LOAD_RANDOM_BOOKMARK) {
+  if (command === Command.LOAD_RANDOM_BOOKMARK) {
     if (tab.id === undefined) {
       return
     }

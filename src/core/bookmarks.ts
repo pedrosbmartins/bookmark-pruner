@@ -6,6 +6,21 @@ export interface Bookmark {
   dateAdded: number
 }
 
+export async function listAllBookmarkFolders() {
+  const root = (await chrome.bookmarks.getTree())[0]
+  return listFolders(root)
+}
+
+function listFolders(
+  root: chrome.bookmarks.BookmarkTreeNode
+): { id: string; title: string }[] {
+  if (root.children === undefined || root.children.length === 0) return []
+  return [
+    { id: root.id, title: root.title ?? "Root" },
+    ...root.children.flatMap(listFolders)
+  ]
+}
+
 export async function loadNextBookmark(tabId: number) {
   const bookmark = await selectRandomBookmark()
   await store.persistActiveBookmark(tabId, bookmark)
