@@ -1,6 +1,7 @@
 import { Storage } from "@plasmohq/storage"
 
 import type { Bookmark } from "./bookmarks"
+import defaults from "./defaults"
 
 const storage = new Storage({ area: "local" })
 
@@ -8,24 +9,9 @@ const keys = {
   ROOT_BOOKMARK_NODE_ID: "rootBookmarkNodeId"
 }
 
-// @todo: move to separate file
-let DEFAULT_BOOKMARK_NODE_ID: string | undefined
-const DEFAULT_CHROME_BOOKMARK_NODE_ID = "2"
-const DEFAULT_FIREFOX_BOOKMARK_NODE_ID = "menu________"
-
 export async function getRootBookmarkNodeId() {
   const id = await storage.get(keys.ROOT_BOOKMARK_NODE_ID)
-  if (DEFAULT_BOOKMARK_NODE_ID === undefined) {
-    try {
-      await chrome.bookmarks.getSubTree(DEFAULT_FIREFOX_BOOKMARK_NODE_ID)
-      console.info("using firefox default node ID")
-      DEFAULT_BOOKMARK_NODE_ID = DEFAULT_FIREFOX_BOOKMARK_NODE_ID
-    } catch (e) {
-      console.info("using chrome default node ID")
-      DEFAULT_BOOKMARK_NODE_ID = DEFAULT_CHROME_BOOKMARK_NODE_ID
-    }
-  }
-  return id ?? (DEFAULT_BOOKMARK_NODE_ID as string)
+  return id ?? (await defaults.BOOKMARK_NODE_ID())
 }
 
 export async function setRootBookmarkNodeId(id: string) {
