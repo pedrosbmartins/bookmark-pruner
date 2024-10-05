@@ -75,7 +75,14 @@ export default function IndexPopup() {
           ))}
         </ul>
       </div>
-      <div className="bg-[rgba(255,255,255,0.05)] py-2 px-4 flex text-[1em] cursor-pointer hover:bg-[rgba(255,255,255,0.1)]">
+      <div
+        className="bg-[rgba(255,255,255,0.05)] py-2 px-4 flex text-[1em] cursor-pointer hover:bg-[rgba(255,255,255,0.1)]"
+        onClick={() =>
+          window.open(
+            "https://github.com/pedrosbmartins/bookmark-pruner",
+            "_newtab"
+          )
+        }>
         <h3 className="mb-1 text-[rgba(255,255,255,0.5)] font-thin">About</h3>
       </div>
     </div>
