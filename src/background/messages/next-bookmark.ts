@@ -4,9 +4,8 @@ import { loadNextBookmark } from "~core/bookmarks"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const tabId = await findTabId(req)
-  console.log(req)
   if (tabId === undefined) {
-    console.error("next-bookmark: no sender tab found")
+    console.error("next-bookmark: no tab found")
     res.send({})
     return
   }
@@ -15,14 +14,12 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
 }
 
 async function findTabId(req: PlasmoMessaging.Request<keyof MessagesMetadata>) {
-  const id = req.sender?.tab?.id
-  if (id !== undefined) {
-    return id
-  }
-  const [currentTab] = await chrome.tabs.query({
-    active: true,
-    lastFocusedWindow: true
-  })
+  const senderTabId = req.sender?.tab?.id
+  return senderTabId ?? (await currentTabId())
+}
+
+async function currentTabId() {
+  const [currentTab] = await chrome.tabs.query({ active: true })
   return currentTab?.id
 }
 

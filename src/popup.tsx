@@ -43,6 +43,10 @@ export default function IndexPopup() {
     setRootFolderId(id)
   }
 
+  const onNextBookmark = async () => {
+    await sendToBackground({ name: "next-bookmark" })
+  }
+
   return (
     <div className="w-[300px] bg-[#29282D] text-white text-[1.2em]">
       <div className="bg-[rgba(0,0,0,0.25)] p-4 flex flex-col items-center">
@@ -51,9 +55,7 @@ export default function IndexPopup() {
         </h2>
         <button
           className="w-[80%] my-2 py-2 bg-blue-500 rounded-md uppercase font-bold font-mono active:bg-blue-600"
-          onClick={async () => {
-            await sendToBackground({ name: "next-bookmark" })
-          }}>
+          onClick={onNextBookmark}>
           Random bookmark
         </button>
         <span className="text-center text-[0.9em] text-gray-400">
