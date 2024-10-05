@@ -35,7 +35,6 @@
     "permissions": [
       "bookmarks",
       "tabs",
-      "sidePanel",
       "webRequest"
     ],
     "commands": {
