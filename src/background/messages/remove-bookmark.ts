@@ -1,6 +1,6 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
-import { getActiveBookmark } from "~core/bookmarks"
+import * as store from "~core/store"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const tabId = req.sender?.tab?.id
@@ -9,7 +9,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     res.send({})
     return
   }
-  const bookmark = await getActiveBookmark(tabId)
+  const bookmark = await store.getActiveBookmark(tabId)
   if (!bookmark) {
     console.warn("remove-bookmark: active bookmark not found")
     res.send({})

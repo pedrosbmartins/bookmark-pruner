@@ -1,6 +1,4 @@
-import { Storage } from "@plasmohq/storage"
-
-const storage = new Storage({ area: "local" })
+import * as store from "./store"
 
 export interface Bookmark {
   id: string
@@ -8,29 +6,23 @@ export interface Bookmark {
   dateAdded: number
 }
 
-export async function getActiveBookmark(
-  tabId: number
-): Promise<Bookmark | undefined> {
-  return await storage.get<undefined>(tabId.toString())
-}
-
 export async function loadNextBookmark(tabId: number) {
   const bookmark = await selectRandomBookmark()
-  await persistActiveBookmark(tabId, bookmark)
+  await store.persistActiveBookmark(tabId, bookmark)
   await chrome.tabs.update({ url: bookmark.url })
 }
 
 export async function updateActiveBookmarkUrl(tabId: number, newUrl: string) {
-  const bookmark = await getActiveBookmark(tabId)
+  const bookmark = await store.getActiveBookmark(tabId)
   if (!bookmark) {
     console.error("update bookmark url: could not find bookmark")
     return
   }
-  await persistActiveBookmark(tabId, { ...bookmark, url: newUrl })
+  await store.persistActiveBookmark(tabId, { ...bookmark, url: newUrl })
 }
 
 async function selectRandomBookmark() {
-  const rootId = (await storage.get("rootBookmarkNodeId")) ?? "2"
+  const rootId = await store.getRootBookmarkNodeId()
   const root = (await chrome.bookmarks.getSubTree(rootId))[0]
   const childBookmarks = listBookmarkIds(root)
   if (childBookmarks.length === 0) {
@@ -40,10 +32,6 @@ async function selectRandomBookmark() {
   const randomBookmarkId = childBookmarks[randomIndex]
   const randomBookmark = (await chrome.bookmarks.get(randomBookmarkId))[0]
   return buildBookmark(randomBookmark)
-}
-
-async function persistActiveBookmark(tabId: number, bookmark: Bookmark) {
-  await storage.set(tabId.toString(), bookmark)
 }
 
 function listBookmarkIds(root: chrome.bookmarks.BookmarkTreeNode): string[] {

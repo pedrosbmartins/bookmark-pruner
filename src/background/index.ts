@@ -1,14 +1,12 @@
-import {
-  getActiveBookmark,
-  loadNextBookmark,
-  updateActiveBookmarkUrl
-} from "~core/bookmarks"
+import { loadNextBookmark, updateActiveBookmarkUrl } from "~core/bookmarks"
+import commands from "~core/commands"
+import * as store from "~core/store"
 import { isSameURL } from "~utils"
 
 export {}
 
 chrome.commands.onCommand.addListener(async (command, tab) => {
-  if (command === "start-main-flow") {
+  if (command === commands.LOAD_RANDOM_BOOKMARK) {
     if (tab.id === undefined) {
       return
     }
@@ -25,7 +23,7 @@ async function handleRedirect(
 ) {
   const { tabId, url, redirectUrl } = redirectDetails
   if (tabId === -1) return
-  const activeBookmark = await getActiveBookmark(tabId)
+  const activeBookmark = await store.getActiveBookmark(tabId)
   if (!activeBookmark || !isSameURL(activeBookmark.url, url)) {
     return
   }

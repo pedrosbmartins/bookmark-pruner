@@ -1,6 +1,7 @@
 import type { PlasmoMessaging } from "@plasmohq/messaging"
 
-import { getActiveBookmark, type Bookmark } from "~core/bookmarks"
+import type { Bookmark } from "~core/bookmarks"
+import * as store from "~core/store"
 
 const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
   const tabId = req.sender?.tab?.id
@@ -8,7 +9,7 @@ const handler: PlasmoMessaging.MessageHandler = async (req, res) => {
     res.send({})
     return
   }
-  const bookmark = await getActiveBookmark(tabId)
+  const bookmark = await store.getActiveBookmark(tabId)
   res.send({ bookmark: bookmark as Bookmark | undefined })
 }
 

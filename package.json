@@ -39,12 +39,12 @@
       "webRequest"
     ],
     "commands": {
-      "start-main-flow": {
+      "load-random-bookmark": {
         "suggested_key": {
           "default": "Ctrl+Shift+Y",
           "mac": "Command+Shift+Y"
         },
-        "description": "Run the extension flow."
+        "description": "Load a random bookmark."
       }
     }
   }
