@@ -86,7 +86,7 @@ function Content(props: { bookmark?: Bookmark; onNextBookmark: () => void }) {
         </div>
         <div className="flex flex-col">
           <div
-            className="rounded-tr-[20px] bg-black/50 flex-1 flex items-center justify-center py-4 px-6 cursor-pointer select-none hover:bg-red-600"
+            className="rounded-tr-[20px] bg-black/50 flex-1 flex items-center justify-center py-4 px-6 cursor-pointer select-none hover:bg-red-600 active:bg-red-700"
             onClick={() => setShowRemoveDialog(true)}>
             <img
               src={deleteIcon}
@@ -95,7 +95,7 @@ function Content(props: { bookmark?: Bookmark; onNextBookmark: () => void }) {
             />
           </div>
           <div
-            className="rounded-br-[20px] bg-black/30 flex items-center justify-center py-4 px-6 cursor-pointer select-none hover:bg-black/10"
+            className="rounded-br-[20px] bg-black/30 flex items-center justify-center py-4 px-6 cursor-pointer select-none hover:bg-blue-500 active:bg-blue-600"
             onClick={() => {
               setIsVisible(false)
               props.onNextBookmark()
@@ -127,19 +127,19 @@ function RemoveBookmarkDialog(props: {
       className={`fixed top-0 left-0 inset-0 w-screen h-screen bg-[rgba(0,0,0,0.85)] flex justify-center items-center ${props.visible ? "visible" : "hidden"}`}
       onClick={props.onCancel}>
       <div className="bg-[#131216] text-white flex flex-col justify-center rounded-[20px] shadow-[#000_0_1px_5px_0] select-none cursor-default">
-        <div className="text-center py-6 px-12 font-medium">
+        <div className="text-center py-6 px-12 font-medium text-[1.5em]">
           Permanently remove bookmark?
         </div>
         <div className="flex justify-stretch">
           <div
-            className="bg-black/40 flex-1 rounded-bl-[20px] py-3 px-12 cursor-pointer hover:bg-black/20"
+            className="bg-black/40 flex-1 rounded-bl-[20px] py-3 text-center cursor-pointer hover:bg-blue-500 active:bg-blue-600"
             onClick={props.onCancel}>
-            <span className="text-[1.5em] font-medium">Cancel</span>
+            <span className="text-[1.25em]  uppercase">Cancel</span>
           </div>
           <div
-            className="bg-black/10 flex-1 rounded-br-[20px] py-3 px-12 cursor-pointer hover:bg-red-600"
+            className="bg-black/10 flex-1 rounded-br-[20px] py-3 text-center cursor-pointer hover:bg-red-600 active:bg-red-700"
             onClick={props.onRemoveBookmark}>
-            <span className="text-[1.5em] font-medium">Remove</span>
+            <span className="text-[1.25em]  uppercase">Remove</span>
           </div>
         </div>
       </div>
