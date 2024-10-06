@@ -16,7 +16,7 @@ A web extension for:
 
 - **Pruning those old bookmarks** you told yourself you'd read on the weekend, _two years ago_.
 - **Rediscovering** interesting content lost to bookmark oblivion.
-- Or simply **aimlessly navigating** your bookmark collection.
+- Or just **aimlessly navigating** your bookmark collection.
 
 ### How to use
 
