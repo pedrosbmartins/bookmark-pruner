@@ -66,7 +66,7 @@ export default function IndexPopup() {
           {shortcut}
         </span>
       </div>
-      <div className="bg-[rgba(255,255,255,0.05)] p-4">
+      <div className="bg-[rgba(0,0,0,0.3)] p-4">
         <h3 className="font-bold mb-1">Root folder</h3>
         <ul className="font-mono max-h-[200px] overflow-y-auto">
           {folders.map((folder) => (
