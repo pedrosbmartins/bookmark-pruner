@@ -1,7 +1,7 @@
 import { Storage } from "@plasmohq/storage"
 
 import type { Bookmark } from "./bookmarks"
-import defaults from "./defaults"
+import * as defaults from "./defaults"
 
 const storage = new Storage({ area: "local" })
 
@@ -11,7 +11,7 @@ const keys = {
 
 export async function getRootBookmarkNodeId() {
   const id = await storage.get(keys.ROOT_BOOKMARK_NODE_ID)
-  return id ?? (await defaults.BOOKMARK_NODE_ID())
+  return id ?? defaults.INIT_BOOKMARK_NODE_ID
 }
 
 export async function setRootBookmarkNodeId(id: string) {
