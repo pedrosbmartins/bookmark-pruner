@@ -1,8 +1,33 @@
+<img src="./assets/icon.png" width="100px" />
+
+# Bookmark Pruner
+
+A low-effort solution for dealing with your ever-growing collection of bookmarks.
+
+<!-- [TODO: Link to Chrome] / [TODO: Link to Firefox] -->
+
+Soon available on the **Chrome Web Store** and **Firefox Addons**.
+
+![Screenshot](./assets/screenshot.png)
+
+## About
+
+A web extension for:
+
+- **Pruning those old bookmarks** you told yourself you'd read on the weekend, _two years ago_.
+- **Rediscovering** interesting content lost to bookmark oblivion.
+- Or simply **aimlessly navigating** your bookmark collection.
+
+### How to use
+
+1. **Load a random bookmark:** use either the extension's popup panel or the keyboard shortcut (default is `Ctrl + Shift + Y`)
+2. **Prune or keep:** either delete the current bookmark or load the next random one.
+
+If you wish, you can **change the root folder** to restrict which bookmarks are selected by Bookmark Pruner. This setting is available in the popup panel.
+
+## Development
+
 This is a [Plasmo extension](https://docs.plasmo.com/) project bootstrapped with [`plasmo init`](https://www.npmjs.com/package/plasmo).
-
-## Getting Started
-
-First, run the development server:
 
 ```bash
 pnpm dev
@@ -10,24 +35,13 @@ pnpm dev
 npm run dev
 ```
 
-Open your browser and load the appropriate development build. For example, if you are developing for the chrome browser, using manifest v3, use: `build/chrome-mv3-dev`.
+For further guidance, [visit the Plasmo Docs](https://docs.plasmo.com/).
 
-You can start editing the popup by modifying `popup.tsx`. It should auto-update as you make changes. To add an options page, simply add a `options.tsx` file to the root of the project, with a react component default exported. Likewise to add a content page, add a `content.ts` file to the root of the project, importing some module and do some logic, then reload the extension on your browser.
+## License
 
-For further guidance, [visit our Documentation](https://docs.plasmo.com/)
+© Pedro Martins. MIT License.
 
-## Making production build
+## Credits
 
-Run the following:
-
-```bash
-pnpm build
-# or
-npm run build
-```
-
-This should create a production bundle for your extension, ready to be zipped and published to the stores.
-
-## Submit to the webstores
-
-The easiest way to deploy your Plasmo extension is to use the built-in [bpp](https://bpp.browser.market) GitHub action. Prior to using this action however, make sure to build your extension and upload the first version to the store to establish the basic credentials. Then, simply follow [this setup instruction](https://docs.plasmo.com/framework/workflows/submit) and you should be on your way for automated submission!
+- "Delete" icon by <a href="https://www.flaticon.com/free-icons/remove" title="remove icons">DinosoftLabs</a>.
+- "Random" icon by <a href="https://www.flaticon.com/free-icons/random" title="random icons">Icon mania</a>
