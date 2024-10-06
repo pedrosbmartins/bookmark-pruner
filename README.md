@@ -20,10 +20,11 @@ A web extension for:
 
 ### How to use
 
-1. **Load a random bookmark:** use either the extension's popup panel or the keyboard shortcut (default is `Ctrl + Shift + Y`)
-2. **Prune or keep:** either delete the current bookmark or load the next random one.
+1. **Load a random bookmark:** Use either the extension's popup panel or the keyboard shortcut (default is `Ctrl + Shift + Y`)
+2. **Prune or keep:** Decide if you'll keep the bookmark, or if it's time to remove it from your collection.
+3. **Repeat:** Load the next random bookmark and keep on pruning.
 
-If you wish, you can **change the root folder** to restrict which bookmarks are selected by Bookmark Pruner. This setting is available in the popup panel.
+If you wish, you can **change the root folder** to restrict which bookmarks are selected by the extension. This setting is available in the popup panel.
 
 ## Development
 
