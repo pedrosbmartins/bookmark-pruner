@@ -1,8 +1,8 @@
 {
   "name": "bookmark-pruner",
   "displayName": "Bookmark Pruner",
-  "version": "0.0.1",
-  "description": "Load a random bookmark, Prune, Repeat.",
+  "version": "0.0.2",
+  "description": "A low-effort solution for dealing with your ever-growing collection of bookmarks.",
   "author": "Pedro Martins <pedrosbarbosamartins@gmail.com>",
   "scripts": {
     "dev": "plasmo dev",
@@ -29,6 +29,11 @@
     "typescript": "5.3.3"
   },
   "manifest": {
+    "browser_specific_settings": {
+      "gecko": {
+        "id": "bookmark-pruner@pedrosbmartins.github.io"
+      }
+    },
     "host_permissions": [
       "https://*/*"
     ],
