@@ -1,3 +1,4 @@
+import { ROOT_BOOKMARK_NODE_ID } from "./defaults"
 import * as store from "./store"
 
 export interface Bookmark {
@@ -16,9 +17,16 @@ function listFolders(
 ): { id: string; title: string }[] {
   if (root.children === undefined || root.children.length === 0) return []
   return [
-    { id: root.id, title: root.title ?? root.id },
+    { id: root.id, title: getNodeTitle(root) },
     ...root.children.flatMap(listFolders)
   ]
+}
+
+function getNodeTitle(node: chrome.bookmarks.BookmarkTreeNode) {
+  if (node.id === ROOT_BOOKMARK_NODE_ID) {
+    return "All bookmarks"
+  }
+  return node.title ?? node.id
 }
 
 export async function loadNextBookmark(tabId: number) {

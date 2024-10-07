@@ -11,7 +11,7 @@ const keys = {
 
 export async function getRootBookmarkNodeId() {
   const id = await storage.get(keys.ROOT_BOOKMARK_NODE_ID)
-  return id ?? defaults.INIT_BOOKMARK_NODE_ID
+  return id ?? defaults.ROOT_BOOKMARK_NODE_ID
 }
 
 export async function setRootBookmarkNodeId(id: string) {
