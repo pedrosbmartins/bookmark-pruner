@@ -19,7 +19,10 @@ async function findTabId(req: PlasmoMessaging.Request<keyof MessagesMetadata>) {
 }
 
 async function currentTabId() {
-  const [currentTab] = await chrome.tabs.query({ active: true })
+  const [currentTab] = await chrome.tabs.query({
+    active: true,
+    currentWindow: true
+  })
   return currentTab?.id
 }
 
