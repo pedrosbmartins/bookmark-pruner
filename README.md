@@ -4,9 +4,7 @@
 
 A low-effort solution for dealing with your ever-growing collection of bookmarks.
 
-<!-- [TODO: Link to Chrome] / [TODO: Link to Firefox] -->
-
-Soon available on the **Chrome Web Store** and **Firefox Addons**.
+Available on the [Chrome Web Store](https://chromewebstore.google.com/detail/bookmark-pruner/kcchbjeaiekpkfmafbmbbgokifliadil) and [Add-ons for Firefox](https://addons.mozilla.org/en-US/firefox/addon/bookmark-pruner/).
 
 ![Screenshot](./assets/screenshot.png)
 
