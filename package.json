@@ -1,7 +1,7 @@
 {
   "name": "bookmark-pruner",
   "displayName": "Bookmark Pruner",
-  "version": "0.0.3",
+  "version": "0.1.0",
   "description": "A low-effort solution for dealing with your ever-growing collection of bookmarks.",
   "author": "Pedro Martins <pedrosbarbosamartins@gmail.com>",
   "scripts": {
